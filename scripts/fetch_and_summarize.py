@@ -18,7 +18,7 @@ from pathlib import Path
 from string import Template
 
 import feedparser
-import google.generativeai as genai
+from google import genai
 import jpholiday
 
 # ============================================================
@@ -139,7 +139,7 @@ def summarize_with_gemini(articles: list[dict]) -> dict:
         print("[ERROR] GEMINI_API_KEY が設定されていません", file=sys.stderr)
         sys.exit(1)
 
-    genai.configure(api_key=api_key)
+    client = genai.Client(api_key=api_key)
 
     articles_text = ""
     for i, a in enumerate(articles, 1):
@@ -207,8 +207,7 @@ E: 参考情報。
 重要度が高い順に並べてください。
 """
 
-    model = genai.GenerativeModel("gemini-2.0-flash")
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
 
     text = response.text.strip()
     text = re.sub(r"^```json\s*", "", text)
