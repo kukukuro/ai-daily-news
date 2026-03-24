@@ -1,0 +1,40 @@
+name: Daily AI News
+
+on:
+  schedule:
+    # 毎朝 7:30 JST = 22:30 UTC (前日)
+    # UTC 基準で日〜木の 22:30 = JST 基準で月〜金の 7:30
+    - cron: '30 22 * * 0-4'
+  workflow_dispatch: # 手動実行も可能
+
+permissions:
+  contents: write
+
+jobs:
+  generate-news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch and summarize news
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          PAGES_URL: ${{ secrets.PAGES_URL }}
+        run: python scripts/fetch_and_summarize.py
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          keep_files: true
