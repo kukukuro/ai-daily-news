@@ -1,11 +1,13 @@
 name: Daily AI News
 
 on:
-  schedule:
-    # 毎朝 7:30 JST = 22:30 UTC (前日)
-    # UTC 基準で日〜木の 22:30 = JST 基準で月〜金の 7:30
-    - cron: '30 22 * * 0-4'
-  workflow_dispatch: # 手動実行も可能
+  # Gemini API が有料化したため自動実行を停止中（2026-06-08）。
+  # 再開する場合は以下の schedule のコメントを外す。
+  # schedule:
+  #   # 毎朝 7:30 JST = 22:30 UTC (前日)
+  #   # UTC 基準で日〜木の 22:30 = JST 基準で月〜金の 7:30
+  #   - cron: '30 22 * * 0-4'
+  workflow_dispatch: # 手動実行のみ可能
 
 permissions:
   contents: write
